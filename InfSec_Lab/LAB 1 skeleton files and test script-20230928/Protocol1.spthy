@@ -20,6 +20,9 @@ builtins: symmetric-encryption
 rule ShareKey:  // share a key pair between two parties.
 /*FILL IN HERE*/
 
+[ Fr(~kAB) ]
+--[ ShareKey($A, $B, ~kAB) ]-> 
+[ !St_Key_ex($A, $B, ~kAB) ]
 
 /* -------------- */
 /* Protocol rules */
@@ -31,11 +34,22 @@ rule ShareKey:  // share a key pair between two parties.
 rule AliceSends:
 /*FILL IN HERE*/ 
 
+[   Fr(~ma), !St_Key_ex($A, $B, kAB) ]
+--[ AliceSends($A, $B, kAB, ~ma) ]-> 
+[   Out(senc(~ma, kAB)) 
+    , St_A($A, $B, kAB, ~ma)]
+
 /* The following rule should be annotated by the following action facts: 
 - BobReceivesAndSends($B, $A, kAB, ~mb, ma)
 */
 rule BobReceivesAndSends:
 /*FILL IN HERE*/
+
+let ma = sdec(msg, kAB) in
+
+[ Fr(~mb), In(msg), !St_Key_ex($B, $A, kAB) ]
+--[BobReceivesAndSends($B, $A, kAB, ~mb, ma), FinishedB($A, $B, ma, ~mb)]-> 
+[ Out(senc(~mb, kAB)) ]
 
 /* The following rule should be annotated by the following action facts: 
 - AliceReceives($A, $B, kAB, ~ma, mb)
@@ -43,7 +57,12 @@ rule BobReceivesAndSends:
 rule AliceReceives:
 /*FILL IN HERE*/
 
+let mb = sdec(msg, kAB) in
 
+[ !St_Key_ex($A, $B, kAB), In(msg), St_A($A, $B, kAB, ~ma)]
+--[ AliceReceives($A, $B, kAB, ~ma, mb) 
+    , FinishedA($A, $B, ~ma, mb)]-> 
+[]
 
 
 /* ---------- */

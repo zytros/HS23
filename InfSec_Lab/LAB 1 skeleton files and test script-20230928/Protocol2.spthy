@@ -19,6 +19,9 @@ builtins: symmetric-encryption, asymmetric-encryption
 rule PubKey:  
 /*FILL IN HERE*/
 
+[]
+--[PubKey($A, ~ska)]->
+[]
 
 /* -------------- */
 /* Protocol rules */
@@ -29,11 +32,19 @@ rule PubKey:
 rule AliceSends:
 /*FILL IN HERE*/
 
+[]
+--[AliceSends($A, $B, ~ma, ~kAB, pkB)]->
+[]
+
 /* The following rule should be annotated by the following action facts: 
 - BobReceived($B, $A, ~mb, ma, kAB, ~skb)
 */
 rule BobReceivesAndSends:
 /*FILL IN HERE*/
+
+[]
+--[BobReceived($B, $A, ~mb, ma, kAB, ~skb)]->
+[]
 
 /* The following rule should be annotated by the following action facts: 
 - AliceReceives($A, $B, ~ma, mb, ~kAB)
@@ -41,6 +52,9 @@ rule BobReceivesAndSends:
 rule AliceReceives:
 /*FILL IN HERE*/
 
+[]
+--[AliceReceives($A, $B, ~ma, mb, ~kAB)]->
+[]
 
 
 
