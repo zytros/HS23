@@ -22,7 +22,11 @@ def extract_harris(img, sigma = 1.0, k = 0.05, thresh = 1e-5):
     # TODO: implement the computation of the image gradients Ix and Iy here.
     # You may refer to scipy.signal.convolve2d for the convolution.
     # Do not forget to use the mode "same" to keep the image size unchanged.
-    raise NotImplementedError
+    f_x = np.array([[1,0,-1],[2,0,-2],[1,0,-1]])
+    f_y = np.array([[1,2,1] ,[0,0,0], [-1,-2,-1]])
+    Ix=ndimage.convolve(img,f_x)
+    Iy=ndimage.convolve(img,f_y)
+    
     
     # 2. Blur the computed gradients
     # TODO: compute the blurred image gradients
