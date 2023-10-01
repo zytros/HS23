@@ -17,10 +17,10 @@ def extract_harris(img, sigma = 1.0, k = 0.05, thresh = 1e-5):
     - C:     (h, w) numpy array storing the corner strength
     '''
     # Convert to float
+    img_c = img.copy()
+    img = cv2.cvtColor(img_c, cv2.COLOR_BGR2GRAY)
     img = img.astype(float) / 255.0
 
-    MAX_FILTER_SIZE = 15
-    
     # 1. Compute image gradients in x and y direction
     # TODO: implement the computation of the image gradients Ix and Iy here.
     # You may refer to scipy.signal.convolve2d for the convolution.
@@ -29,20 +29,23 @@ def extract_harris(img, sigma = 1.0, k = 0.05, thresh = 1e-5):
     ky = np.array([[-1,-2,-1] ,[0,0,0], [1,2,1]])
     dx=signal.convolve2d(img,kx, "same")
     dy=signal.convolve2d(img,ky, "same")
-    
+    #dx = cv2.normalize(dx, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+    #dy = cv2.normalize(dy, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+
     
     # 2. Blur the computed gradients
     # TODO: compute the blurred image gradients
     # You may refer to cv2.GaussianBlur for the gaussian filtering (border_type=cv2.BORDER_REPLICATE)
     dx2 = ndimage.gaussian_filter(dx**2, sigma)
     dy2 = ndimage.gaussian_filter(dy**2, sigma)
-    dxy = ndimage.gaussian_filter(dx*dy, sigma)  
+    dxy = ndimage.gaussian_filter(dx*dy, sigma)
 
 
     # 3. Compute elements of the local auto-correlation matrix "M"
     # TODO: compute the auto-correlation matrix here
     
-    #done above    
+    #done above
+    
 
     # 4. Compute Harris response function C
     # TODO: compute the Harris response function C here
@@ -53,18 +56,33 @@ def extract_harris(img, sigma = 1.0, k = 0.05, thresh = 1e-5):
     
     C = detA - k * (traceA ** 2)
     
+    C = cv2.normalize(C, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
+    
 
     # 5. Detection with threshold and non-maximum suppression
     # TODO: detection and find the corners here
     # For the non-maximum suppression, you may refer to scipy.ndimage.maximum_filter to check a 3x3 neighborhood.
     # You may refer to np.where to find coordinates of points that fulfill some condition; Please, pay attention to the order of the coordinates.
     # You may refer to np.stack to stack the coordinates to the correct output format
+    print('sigma = ',sigma)
+    print('min',np.min(C))
+    print('max',np.max(C))
+    print('--------------------')
+    loc = np.where(C > thresh)
     
-    thresh_mask = C > thresh
-    C_filtered = ndimage.maximum_filter(C, size=MAX_FILTER_SIZE)
-    diff_mask = abs(C_filtered - C) < 1e-5
-    coords = thresh_mask & diff_mask
-    y,x = np.where(coords)
-    corners = np.stack((x,y), axis=1)
+    for pt in zip(*loc[::-1]):
+        cv2.circle(img, pt, 1, 0, -1)
+    
+    cv2.imshow('C',C)
+    cv2.waitKey(0)
+    non_max_suppression = ndimage.maximum_filter(C, size=(3,3))
+    cv2.imshow('non_max_suppression',non_max_suppression)
+    cv2.waitKey(0)
+    corners = 0
+    
     return corners, C
 
+def main():
+    _, C = extract_harris(cv2.imread("images/blocks.jpg"))
+
+main()
