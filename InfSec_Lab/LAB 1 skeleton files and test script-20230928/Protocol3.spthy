@@ -21,10 +21,17 @@ builtins: asymmetric-encryption, symmetric-encryption, hashing
 */
 rule PubKey:  
 /*FILL IN HERE*/
+[Fr(~skA)]
+--[PubKey($A, ~skA)]->
+[Out(pk(~ska)), St_SkA($A, ~skA)]
+
 
 /* The following rule should be annotated by the following action facts: 
 - RevealKey($A, ~skA)
 */
+
+
+
 //un-comment the following line for Task 1.6
 //rule RevealKey:
 /*FILL IN HERE*/
@@ -39,31 +46,51 @@ rule PubKey:
 */
 rule AliceSendsKey:
 /*FILL IN HERE*/
+[]
+--[AliceSendsKey($A, $B, ~skA, pkB, ~Na)]->
+[]
+
 
 /* The following rule should be annotated by the following action facts: 
 - BobReceivesKey($B, $A, ~skB, pkA, ~Nb, Na)
 */
 rule BobReceivesKey:
 /*FILL IN HERE*/
+[]
+--[BobReceivesKey($B, $A, ~skB, pkA, ~Nb, Na)]->
+[]
+
 
 /* The following rule should be annotated by the following action facts: 
 - AliceReceivesNb($A, $B, ~skA, ~Na, Nb, ~ma, Kab)
 */
 rule AliceReceivesNb:
 /*FILL IN HERE*/
+[]
+--[AliceReceivesNb($A, $B, ~skA, ~Na, Nb, ~ma, Kab)]->
+[]
+
+
 
 /* The following rule should be annotated by the following action facts: 
 - BobReceivesMa($B, $A, ~skB, ~Nb, Na, Kab, ~mb, ma)
 */
 rule BobReceivesMa:
 /*FILL IN HERE*/
+[]
+--[BobReceivesMa($B, $A, ~skB, ~Nb, Na, Kab, ~mb, ma)]->
+[]
+
+
 
 /* The following rule should be annotated by the following action facts: 
 - AliceReceivesMb($A, $B, ~skA, ~Na, ~ma, Kab)
 */
 rule AliceReceivesMb:
 /*FILL IN HERE*/
-
+[]
+--[AliceReceivesMb($A, $B, ~skA, ~Na, ~ma, Kab)]->
+[]
 
 
 /* Restrictions*/
