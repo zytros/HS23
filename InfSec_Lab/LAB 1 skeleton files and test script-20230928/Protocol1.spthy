@@ -37,7 +37,6 @@ rule AliceSends:
 [   Fr(~ma), !St_Key_ex($A, $B, kAB) ]
 --[ 
     AliceSends($A, $B, kAB, ~ma), 
-    SecretA(~ma),
     RunningA($A, $B, ~ma)
     ]-> 
 [   Out(senc(~ma, kAB)) 
@@ -72,6 +71,7 @@ let mb = sdec(msg, kAB) in
 [ !St_Key_ex($A, $B, kAB), In(msg), St_A($A, $B, kAB, ~ma)]
 --[ AliceReceives($A, $B, kAB, ~ma, mb), 
     FinishedA($A, $B, ~ma, mb),
+    SecretA(~ma),
     CommitA($A, $B, mb)
     ]-> 
 []
@@ -99,7 +99,7 @@ You may only use the action facts SecretA, SecretB, and K to formulate this lemm
 lemma secrecyB:
 /*FILL IN HERE: 
 You may only use the action facts SecretA, SecretB, and K to formulate this lemma.*/
-"All mb #i. SecretA(mb)@i ==> not (Ex #j. K(mb)@j)"
+"All mb #i. SecretB(mb)@i ==> not (Ex #j. K(mb)@j)"
 
 //un-comment following line for Task 1.4
 lemma non_injectiveA:

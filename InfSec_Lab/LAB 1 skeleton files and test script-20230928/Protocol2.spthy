@@ -34,7 +34,6 @@ rule AliceSends:
 
 [Fr(~kAB), Fr(~ma), !St_pk($A, pkB, $B),]
 --[ AliceSends($A, $B, ~ma, ~kAB, pkB), 
-    SecretA(~ma),
     RunningA($A, $B, ~ma),
     ]->
 [ Out(<$A, aenc(~kAB, pkB), senc(~ma, ~kAB)>), St_A_send($A, $B, ~kAB, ~ma)]
@@ -67,6 +66,7 @@ let mb = sdec(msg, ~kAB) in
 [In(msg), St_A_send($A, $B, ~kAB, ~ma)]
 --[ AliceReceives($A, $B, ~ma, mb, ~kAB), 
     FinishedA($A, $B, ~ma, mb),
+    SecretA(~ma),
     CommitA($A, $B, mb),
     ]->
 []
