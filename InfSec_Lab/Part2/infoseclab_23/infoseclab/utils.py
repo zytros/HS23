@@ -3,7 +3,7 @@ import inspect
 import os
 import torch
 import numpy as np
-from infoseclab.data import ImageNet, th_to_npy_uint8, npy_uint8_to_th
+from infoseclab_23.infoseclab.data import ImageNet, th_to_npy_uint8, npy_uint8_to_th
 import matplotlib.pyplot as plt
 from tqdm import trange
 

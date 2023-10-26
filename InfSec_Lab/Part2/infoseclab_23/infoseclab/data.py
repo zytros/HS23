@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import json
-from infoseclab import common
+from infoseclab_23.infoseclab import common
 
 EPSILON = 8.  # Our perturbation budget is 8 (out of 256) for each pixel.
 

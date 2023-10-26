@@ -1,6 +1,6 @@
-from infoseclab.data import ImageNet, EPSILON, npy_uint8_to_th
-from infoseclab.defenses import ResNet, ResNetDetector, RFDetector, ResNetRandom, ResNetBlur, ResNetDiscrete
-from infoseclab.utils import batched_func
+from infoseclab_23.infoseclab.data import ImageNet, EPSILON, npy_uint8_to_th
+from infoseclab_23.infoseclab.defenses import ResNet, ResNetDetector, RFDetector, ResNetRandom, ResNetBlur, ResNetDiscrete
+from infoseclab_23.infoseclab.utils import batched_func
 import torch
 import numpy as np
 import sklearn.metrics
