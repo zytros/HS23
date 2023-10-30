@@ -13,7 +13,7 @@ class Vgg(nn.Module):
         self.fc_layer = fc_layer
         self.classes = classes
 
-        # todo: construct the simplified VGG network blocks
+        # TODO: construct the simplified VGG network blocks
         # input shape: [bs, 3, 32, 32]
         # layers and output feature shape for each block:
         # # conv_block1 (Conv2d, ReLU, MaxPool2d) --> [bs, 64, 16, 16]
@@ -31,8 +31,43 @@ class Vgg(nn.Module):
         # #     ...)
         # for all conv layers, set: kernel=3, padding=1
 
-        ...
+        self.conv_block1 = nn.Sequential(
+            nn.Conv2d(3, 64, padding=1, kernel_size=3, stride=2),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.conv_block2 = nn.Sequential(
+            nn.Conv2d(64, 128, padding=1, kernel_size=3, stride=2),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.conv_block3 = nn.Sequential(
+            nn.Conv2d(128, 256, padding=1, kernel_size=3, stride=2),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.conv_block4 = nn.Sequential(
+            nn.Conv2d(256, 512, padding=1, kernel_size=3, stride=2),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.conv_block5 = nn.Sequential(
+            nn.Conv2d(512, 512, padding=1, kernel_size=3, stride=2),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.classifier = nn.Sequential(
+            nn.Linear(512, 512),
+            nn.ReLU(),
+            nn.Dropout2d(),
+            nn.Linear(512, 10)
+        )
 
+
+
+        
+        
+        
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
@@ -45,9 +80,14 @@ class Vgg(nn.Module):
         :param x: input image batch tensor, [bs, 3, 32, 32]
         :return: score: predicted score for each class (10 classes in total), [bs, 10]
         """
-        score = None
-        # todo
-        ...
+        
+        # TODO
+        x = self.conv_block1(x)
+        x = self.conv_block2(x)
+        x = self.conv_block3(x)
+        x = self.conv_block4(x)
+        x = self.conv_block5(x)
+        x = self.classifier(x.view(-1, 512))
 
-        return score
+        return x
 
