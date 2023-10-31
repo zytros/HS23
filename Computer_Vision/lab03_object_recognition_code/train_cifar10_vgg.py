@@ -43,7 +43,6 @@ def train(writer, logger):
                                                  num_workers=2)
 
     model = Vgg(fc_layer=args.fc_layer, classes=10).to(device)
-    print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     # time_meter = averageMeter()
 
@@ -56,7 +55,6 @@ def train(writer, logger):
 
             model.train()
             imgs = data[0].to(device)  # [batch_size, 3, 32, 32]
-            print(imgs.shape)
             label = data[1].to(device)  # [batch_size]
             optimizer.zero_grad()
             preds = model(imgs)

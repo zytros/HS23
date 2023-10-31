@@ -34,32 +34,32 @@ class Vgg(nn.Module):
         self.conv_block1 = nn.Sequential(
             nn.Conv2d(3, 64, padding=1, kernel_size=3, stride=2),
             nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.MaxPool2d(kernel_size=2, stride=1, padding=1)
         )
         self.conv_block2 = nn.Sequential(
             nn.Conv2d(64, 128, padding=1, kernel_size=3, stride=2),
             nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.MaxPool2d(kernel_size=2, stride=1, padding=1)
         )
         self.conv_block3 = nn.Sequential(
             nn.Conv2d(128, 256, padding=1, kernel_size=3, stride=2),
             nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.MaxPool2d(kernel_size=2, stride=1, padding=1)
         )
         self.conv_block4 = nn.Sequential(
             nn.Conv2d(256, 512, padding=1, kernel_size=3, stride=2),
             nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.MaxPool2d(kernel_size=2, stride=1, padding=1)
         )
         self.conv_block5 = nn.Sequential(
             nn.Conv2d(512, 512, padding=1, kernel_size=3, stride=2),
             nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.MaxPool2d(kernel_size=2, stride=2, padding=1)
         )
         self.classifier = nn.Sequential(
-            nn.Linear(512, 512),
+            nn.Linear(2048, 512),
             nn.ReLU(),
-            nn.Dropout2d(),
+            nn.Dropout(p=0.25),
             nn.Linear(512, 10)
         )
 
@@ -87,7 +87,8 @@ class Vgg(nn.Module):
         x = self.conv_block3(x)
         x = self.conv_block4(x)
         x = self.conv_block5(x)
-        x = self.classifier(x.view(-1, 512))
+        x = x.reshape(x.shape[0], -1)
+        x = self.classifier(x)
 
         return x
 
