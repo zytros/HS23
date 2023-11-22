@@ -6,29 +6,45 @@ from skimage import io, color
 from skimage.transform import rescale
 
 def distance(x, X):
-    raise NotImplementedError('distance function not implemented!')
+    #use one func to calc all dist
+    a = np.linalg.norm(X, axis=1) * np.ones((X.shape[0], X.shape[0]))
+    b = (np.linalg.norm(X, axis=1) * np.ones((X.shape[0], X.shape[0]))).transpose()
+    ab = np.matmul(X, X.transpose())
+    dist = np.sqrt(np.abs(a**2 - 2*ab + b**2))
+    return dist
 
 def gaussian(dist, bandwidth):
-    raise NotImplementedError('gaussian function not implemented!')
+    d = np.exp(-0.5 * (dist/bandwidth)**2)
+    return d
 
-def update_point(weight, X):
-    raise NotImplementedError('update_point function not implemented!')
+
+def update_point(weights, X):
+    s = np.sum(weights,axis=1,keepdims=True)
+    #print(s)
+    return np.matmul(weights, X) / s
 
 def meanshift_step(X, bandwidth=2.5):
-    raise NotImplementedError('meanshift_step function not implemented!')
+    X_new = X.copy()
+    dist = distance(X, X)
+    weight = gaussian(dist, bandwidth)
+    X_new = update_point(weight, X)
+    return X_new
 
 def meanshift(X):
-    for _ in range(20):
+    for i in range(20):
+        t = time.time()
         X = meanshift_step(X)
+        print('Iteration {} in {}s'.format(i, time.time() - t))
     return X
 
-scale = 0.5    # downscale the image to run faster
+scale = 0.5   # downscale the image to run faster
 
 # Load image and convert it to CIELAB space
 image = rescale(io.imread('eth.jpg'), scale, channel_axis=-1)
 image_lab = color.rgb2lab(image)
 shape = image_lab.shape # record image shape
 image_lab = image_lab.reshape([-1, 3])  # flatten the image
+
 
 # Run your mean-shift algorithm
 t = time.time()

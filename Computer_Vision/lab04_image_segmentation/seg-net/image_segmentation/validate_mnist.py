@@ -4,7 +4,9 @@ from __future__ import print_function
 
 import argparse
 import os
+import sys
 import pprint
+sys.path.append('C:/Users/lucas/Documents/HS23/Computer_Vision/lab04_image_segmentation/seg-net')
 
 import torch
 import torch.optim as optim
