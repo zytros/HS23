@@ -23,14 +23,14 @@ def update_point(weights, X):
     #print(s)
     return np.matmul(weights, X) / s
 
-def meanshift_step(X, bandwidth=2.5):
+def meanshift_step(X, bandwidth=10):
     X_new = X.copy()
     dist = distance(X, X)
     weight = gaussian(dist, bandwidth)
     X_new = update_point(weight, X)
     return X_new
 
-def meanshift(X):
+def meanshift(X,):
     for i in range(20):
         t = time.time()
         X = meanshift_step(X)
