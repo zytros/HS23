@@ -246,7 +246,9 @@ class ECDSA2():
         """
         # FILL IN THIS METHOD
         # TODO:
-        raise NotImplementedError()
+        x = secrets.randbelow(self.q-1)+1
+        Q = x * self.P
+        return (x,Q)
 
 
     def Sign_FixedNonce(self, nonce: IntegerMod_int, privkey: IntegerMod_int, msg: str) -> Tuple[IntegerMod_int, IntegerMod_int]:
@@ -262,7 +264,12 @@ class ECDSA2():
         """
         # FILL IN THIS METHOD
         # TODO:
-        raise NotImplementedError()
+        h = self.Z_q(bits_to_int(hash_message_to_bits(msg)))
+        k = self.Z_q(nonce)
+        r = self.Z_q((k * self.P).x)
+        k_inv = 1/k
+        s = k_inv * (h*h + 1337*privkey*r)
+        return (r,s)
 
     def Sign(self, privkey, msg) -> Tuple[IntegerMod_int, IntegerMod_int]:
         """Computes an ECDSA^2 signature for a randomly chosen nonce
@@ -278,7 +285,20 @@ class ECDSA2():
         """
         # FILL IN THIS METHOD
         # TODO:
-        raise NotImplementedError()
+        H = hash_message_to_bits(msg)
+        h = self.Z_q(bits_to_int(H,self.q))
+        k = 0
+        r = 0
+        s = 0
+        while r == 0 or s == 0:
+            k = self.Z_q(secrets.randbelow(self.q-1)+1)
+            k_p = k * self.P
+            r = self.Z_q(k_p.x)
+            k_inv = 1/k
+            print(type(h*h),(1337*privkey*r))
+            s = k_inv * ((h*h) + (1337*privkey*r))
+            s = self.Z_q(s)
+        return (r,s)
 
     def Verify(self, pubkey: Point, msg: str, r: IntegerMod_int, s: IntegerMod_int) -> bool:
         """Verifies an ECDSA^2 signature
@@ -294,7 +314,17 @@ class ECDSA2():
         """
         # FILL IN THIS METHOD
         # TODO:
-        raise NotImplementedError()
+        if not (1 <= r and r <= self.q-1 and 1 <= s and s <= self.q-1):
+            return False
+        w = self.Z_q(1/self.Z_q(s))
+        h = self.Z_q(bits_to_int(hash_message_to_bits(msg),self.q))
+        u_1 = self.Z_q(w * h * h)
+        u_2 = self.Z_q(w*1337*r)
+        Z = (u_1 * self.P) + (u_2 * pubkey)
+        if self.Z_q(Z.x) == r:
+            print('verified')
+            return True
+        return False
 
 if __name__ == "__main__":
     # A small test suite for verifying that everything works
