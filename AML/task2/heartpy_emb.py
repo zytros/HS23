@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import heartpy as hp
 
-df_train_features=pd.read_csv('X_train.csv')
+df_train_features=pd.read_csv('X_test.csv')
 Y=pd.read_csv('y_train.csv')
 #x_test_f=pd.read_csv('X_test.csv')
 
@@ -23,7 +23,7 @@ def Extraction(X_train):
         #t, filtered_signal, rpeaks = biosppy.signals.ecg.ecg(feature, show=False)[:3]
         #nni = tools.nn_intervals(t[rpeaks])
         #analyze_df = hrv(rpeaks=t[rpeaks], sampling_rate=300, plot_ecg=False,plot_tachogram=False, show=False)
-        wd, m = hp.process(signal1, sample_rate = 300.0, bpmmin = -1000, bpmmax = 1000)
+        wd, m = hp.process(signal1, sample_rate = 300.0, bpmmin = 40, bpmmax = 120)
         z=0
         for measure in m.keys():
                 results_all[i,z] = m[measure]
@@ -45,4 +45,4 @@ X_values,Y_labels= Vector(df_train_features,Y)
 X_features=Extraction(X_values)
 
 df = pd.DataFrame(X_features)
-df.to_csv('heartpy_features.csv',index=False)
+df.to_csv('heartpy_features_test.csv',index=False)

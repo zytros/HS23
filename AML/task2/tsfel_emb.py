@@ -4,7 +4,7 @@ import tqdm
 import numpy as np
 
 
-X_train_orig = pd.read_csv('X_train.csv')
+X_train_orig = pd.read_csv('X_test.csv')
 feature=X_train_orig.iloc[:,1:2459].dropna(axis=1).to_numpy()
 
 
@@ -20,4 +20,4 @@ for i in tqdm.tqdm(range(feature.shape[0])):
 X=X.to_numpy()
 
 df = pd.DataFrame(features)
-df.to_csv('tsfel_features.csv')
+df.to_csv('tsfel_features_test.csv')
