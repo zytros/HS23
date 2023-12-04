@@ -86,8 +86,11 @@ def condensation_tracker(video_name, params):
         )
     bbox = plt.connect('key_press_event', toggle_selector)
     key = plt.connect('key_press_event', onkeypress)
+    
     plt.title("Draw a box then press 'q' to continue")
+    
     plt.show()
+    
 
     bbox_width = bottom_right[0] - top_left[0]
     bbox_height = bottom_right[1] - top_left[1]
@@ -226,10 +229,10 @@ if __name__ == "__main__":
     params = {
         "draw_plots": 1,
         "hist_bin": 16,
-        "alpha": 0,
+        "alpha": 0.2,
         "sigma_observe": 0.1,
         "model": 0,
-        "num_particles": 30,
+        "num_particles": 50,
         "sigma_position": 15,
         "sigma_velocity": 1,
         "initial_velocity": (1, 10)
