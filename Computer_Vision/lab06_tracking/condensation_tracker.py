@@ -61,6 +61,9 @@ def condensation_tracker(video_name, params):
     elif video_name == "video3.avi":
         first_frame = 1
         last_frame = 60
+    elif video_name == "video1_rotated.mp4":
+        first_frame = 10
+        last_frame = 42
 
     # Change this to where your data is
     data_dir = './ex6_data/'
@@ -225,8 +228,21 @@ def condensation_tracker(video_name, params):
 
 
 if __name__ == "__main__":
-    video_name = 'video3.avi'
+    video_name = 'video1.avi'
     params = {
+        "draw_plots": 1,
+        "hist_bin": 16,
+        "alpha": 0.2,
+        "sigma_observe": 0.1,
+        "model": 1,
+        "num_particles": 50,
+        "sigma_position": 15,
+        "sigma_velocity": 1,
+        "initial_velocity": (1, 10)
+    }
+    condensation_tracker(video_name, params)
+
+params_vid1 = {
         "draw_plots": 1,
         "hist_bin": 16,
         "alpha": 0.2,
@@ -237,4 +253,25 @@ if __name__ == "__main__":
         "sigma_velocity": 1,
         "initial_velocity": (1, 10)
     }
-    condensation_tracker(video_name, params)
+params_vid2 = {
+        "draw_plots": 1,
+        "hist_bin": 12,
+        "alpha": 0.1,
+        "sigma_observe": 0.1,
+        "model": 0,
+        "num_particles": 60,
+        "sigma_position": 15,
+        "sigma_velocity": 1,
+        "initial_velocity": (1, 10)
+    }
+params_vid3 = {
+        "draw_plots": 1,
+        "hist_bin": 16,
+        "alpha": 0.1,
+        "sigma_observe": 0.1,
+        "model": 0,
+        "num_particles": 50,
+        "sigma_position": 15,
+        "sigma_velocity": 1,
+        "initial_velocity": (1, 10)
+    }
