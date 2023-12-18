@@ -1,8 +1,7 @@
 import secrets
+import time
 from ecdsa2 import ECDSA2, ECDSA2_Params, bits_to_int, hash_message_to_bits
 from boilerplate import CommandServer, on_command
-
-from sage.all import Zmod
 
 # Parameters of the P-256 NIST curve
 a   = 0xffffffff00000001000000000000000000000000fffffffffffffffffffffffc
@@ -22,6 +21,10 @@ class SignServer(CommandServer):
         self.flag = flag
         self.ecdsa = ECDSA2(nistp256_params)
         self.privkey, self.pubkey = self.ecdsa.KeyGen()
+
+        # An unguessable secret...
+        self.secret = secrets.token_hex(16)
+
         super().__init__(*args, **kwargs)
 
     @on_command("get_pubkey")
@@ -31,9 +34,10 @@ class SignServer(CommandServer):
     @on_command("get_signature")
     def handle_signature(self, msg):
         try:
-            h = bits_to_int(hash_message_to_bits("Now you're just some value that I used to nonce"), self.ecdsa.q)
+            ts = int(time.time())
+            h = bits_to_int(hash_message_to_bits(self.secret + str(ts)), q)
             k = self.ecdsa.Z_q(h)
-            print('k= ',k)
+
             m = msg["msg"]
 
             if m == "gimme the flag":
@@ -49,7 +53,6 @@ class SignServer(CommandServer):
     @on_command("solve")
     def handle_verification(self, msg):
         try:
-            print('privkey=',self.privkey)
             r = self.ecdsa.Z_q(msg["r"])
             s = self.ecdsa.Z_q(msg["s"])
             if self.ecdsa.Verify(self.pubkey, "gimme the flag", r, s):
@@ -57,8 +60,8 @@ class SignServer(CommandServer):
             else:
                 self.send_message({"res": "Nah."})
         except (KeyError, ValueError, TypeError) as e:
-            self.send_message({"errorr": f"Invalid parameters: {type(e).__name__} {e}"})
+            self.send_message({"error": f"Invalid parameters: {type(e).__name__} {e}"})
 
 if __name__ == "__main__":
     flag = "flag{test_flag}"
-    SignServer.start_server("0.0.0.0", 40110, flag=flag)
+    SignServer.start_server("0.0.0.0", 40120, flag=flag)
