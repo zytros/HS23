@@ -42,7 +42,10 @@ def UpdateReconstructionState(new_points3D, corrs, points3D, images):
   # Be careful to update the point indices to the global indices in the `points3D` array.
   points3D = np.append(points3D, new_points3D, 0)
 
+  idx_b = points3D.shape[0] 
   for im_name in corrs:
-    images[im_name].Add3DCorrs(...)
+    idxs = corrs[im_name]
+    idxs_3d = np.array([idx_b + i for i in range(len(idxs))])
+    images[im_name].Add3DCorrs(idxs, idxs_3d)
 
   return points3D, images
