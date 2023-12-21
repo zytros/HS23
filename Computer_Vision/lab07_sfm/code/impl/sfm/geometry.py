@@ -13,8 +13,9 @@ from impl.sfm.corrs import GetPairMatches
 def EstimateEssentialMatrix(K, im1, im2, matches):
   # TODO
   # Normalize coordinates (to points on the normalized image plane)
-  normalized_kps1 = 
-  normalized_kps2 = 
+  k_inv = np.linalg.inv(K)
+  normalized_kps1 = np.matmul(MakeHomogeneous(im1.kps, ax=1), k_inv.T)
+  normalized_kps2 = np.matmul(MakeHomogeneous(im2.kps, ax=1), k_inv.T)
 
   
   # Assemble constraint matrix as equation 2.1
@@ -22,20 +23,24 @@ def EstimateEssentialMatrix(K, im1, im2, matches):
   for i in range(matches.shape[0]):
     # TODO
     # Add the constraints
-  
+    x1 = normalized_kps1[matches[i,0],:]
+    x2 = normalized_kps2[matches[i,1],:]
+    
+    constraint_matrix[i] = np.kron(x1, x2)
   # Solve for the nullspace of the constraint matrix
   _, _, vh = np.linalg.svd(constraint_matrix)
   vectorized_E_hat = vh[-1,:]
 
   # TODO
   # Reshape the vectorized matrix to it's proper shape again
-  E_hat = 
+  E_hat = vectorized_E_hat.reshape((3,3))
 
   # TODO
   # We need to fulfill the internal constraints of E
   # The first two singular values need to be equal, the third one zero.
   # Since E is up to scale, we can choose the two equal singluar values arbitrarily
-  E = 
+  U, S, Vh = np.linalg.svd(E_hat)
+  E = np.matmul(np.matmul(U, np.diag([1, 1, 0])), Vh)
 
   # This is just a quick test that should tell you if your estimated matrix is not correct
   # It might fail if you estimated E in the other direction (i.e. kp2' * E * kp1)
@@ -131,15 +136,18 @@ def TriangulatePoints(K, im1, im2, matches):
   # Filter points behind the cameras by transforming them into each camera space and checking the depth (Z)
   # Make sure to also remove the corresponding rows in `im1_corrs` and `im2_corrs`
 
-  # Filter points behind the first camera
-  im1_corrs = 
-  im2_corrs =
-  points3D = 
-
-  # Filter points behind the second camera
-  im1_corrs = 
-  im2_corrs =
-  points3D = 
+  camera1_points = np.zeros(np.shape(points3D))
+  camera2_points = np.zeros(np.shape(points3D))
+  for i in range(points3D.shape[0]):
+    camera1_points[i] = np.matmul(R1,points3D[i]) + t1
+    camera2_points[i] = np.matmul(R2,points3D[i]) + t2
+  z_values1 = camera1_points[:,2]
+  z_values2 = camera2_points[:,2]
+  mask = np.all(np.stack((z_values1 > 0, z_values2 > 0)), axis=0)
+  
+  points3D = points3D[mask]
+  im1_corrs = im1_corrs[mask]
+  im2_corrs = im2_corrs[mask]
 
   return points3D, im1_corrs, im2_corrs
 
@@ -149,7 +157,8 @@ def EstimateImagePose(points2D, points3D, K):
   # We use points in the normalized image plane.
   # This removes the 'K' factor from the projection matrix.
   # We don't normalize the 3D points here to keep the code simpler.
-  normalized_points2D = 
+  k_inv = np.linalg.inv(K)
+  normalized_points2D = np.matmul(MakeHomogeneous(points2D, ax=1), k_inv.T)
 
   constraint_matrix = BuildProjectionConstraintMatrix(normalized_points2D, points3D)
 

@@ -2,6 +2,7 @@ import gc
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 from impl.vis import Plot3DPoints
 from impl.sfm.corrs import Find2D3DCorrespondences, GetPairMatches, UpdateReconstructionState
@@ -13,8 +14,8 @@ from impl.sfm.vis import PlotImages, PlotWithKeypoints, PlotImagePairMatches, Pl
 def main():
 
   np.set_printoptions(linewidth=10000, edgeitems=100, precision=3)
-
-  data_folder = '../data'
+  print(os.getcwd())
+  data_folder = 'data\\'
   image_names = [
     '0000.png',
     '0001.png',
@@ -82,13 +83,21 @@ def main():
   # you can set the image poses in the images (image.SetPose(...))
   # Note that this pose is assumed to be the transformation from global space to image space
   # TODO
-  
 
+  e_im2.SetPose(np.identity(3), np.zeros((3)))
+  
+  for mats in possible_relative_poses:
+    e_im1.SetPose(mats[0], mats[1]) 
+    point3D, im1_corrs, im2_corrs = TriangulatePoints(K, e_im1, e_im2, e_matches)
+    m_points = point3D.shape[0]
+    if m_points > max_points:
+      max_points = m_points
+      best_pose = mats
   # TODO
   # Set the image poses in the images (image.SetPose(...))
   # Note that the pose is assumed to be the transformation from global space to image space
-  e_im1.SetPose(...)
-  e_im2.SetPose(...)
+  e_im2.SetPose(np.identity(3), np.zeros(3))
+  e_im1.SetPose(best_pose[0], best_pose[1])
 
 
   # Triangulate initial points
