@@ -18,9 +18,39 @@ from lib.core.function import validate
 from lib.core.loss import CrossEntropy2D
 from lib.utils.utils import save_checkpoint
 from lib.utils.utils import create_logger
+from torch.utils.data import Dataset, DataLoader
 
 import lib.dataset as dataset
 import lib.models as models
+import io
+
+class MyDataset(Dataset):
+
+    def __init__(self, root_dir):
+        """
+        Arguments:
+            root_dir (string): path to folder containing images and masks
+            
+        """
+        self.root_dir = root_dir
+        self.frames = []
+        self.masks = []
+        for directory in os.listdir(root_dir):
+            for file in os.listdir(root_dir + '/' + directory):
+                if file.endswith('mask.png'):
+                    img = io.imread(root_dir + '/' + directory + '/' + file)
+                    self.masks.append(img)
+                else:
+                    img = io.imread(root_dir + '/' + directory + '/' + file)
+                    self.frames.append(img)
+        assert len(self.frames) == len(self.masks)
+
+    def __len__(self):
+        return len(self.frames)
+
+    def __getitem__(self, idx):
+        return self.frames[idx], self.masks[idx]
+
 
 # For reproducibility, fixing random seeds is usually a good practice.
 seed = 37
@@ -92,6 +122,8 @@ def main():
     # Create training and validation datasets
     train_dataset = dataset.mnist(is_train=True)
     val_dataset = dataset.mnist(is_train=False)
+
+    train_dataset = 0
 
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
