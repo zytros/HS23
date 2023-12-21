@@ -1,0 +1,1 @@
+2023-12-21 12:31:42,836 Namespace(out_dir='out', frequent=10, eval_interval=1, gpu=False, num_workers=4)
