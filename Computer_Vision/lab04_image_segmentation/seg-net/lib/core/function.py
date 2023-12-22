@@ -15,6 +15,9 @@ from lib.utils.vis import vis_segments
 
 logger = logging.getLogger(__name__)
 
+def write_tensor_to_file(tensor, filename):
+    np.savetxt(filename, tensor.numpy())
+
 def train(train_loader, model, criterion, optimizer, epoch,
           output_dir, writer_dict, args):
     """Train the model for one epoch
@@ -50,7 +53,11 @@ def train(train_loader, model, criterion, optimizer, epoch,
 
         # compute output
         output = model(input)
-
+        if first:
+            write_tensor_to_file(input[0],'input.txt')
+            write_tensor_to_file(target[0],'target.txt')
+            write_tensor_to_file(output[0],'output.txt')
+            first = False
         # compute loss
         target = target.to(output.device)
         loss = criterion(output, target)

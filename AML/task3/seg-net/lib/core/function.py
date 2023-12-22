@@ -13,6 +13,9 @@ from lib.core.evaluate import calc_IoU
 from lib.core.inference import get_final_preds
 from lib.utils.vis import vis_segments
 
+def write_tensor_to_file(tensor, filename):
+    np.savetxt(filename, tensor.numpy())
+
 logger = logging.getLogger(__name__)
 
 def train(train_loader, model, criterion, optimizer, epoch,
@@ -32,7 +35,7 @@ def train(train_loader, model, criterion, optimizer, epoch,
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
-
+    first = True
     # switch to train mode
     model.train()
 
@@ -51,6 +54,11 @@ def train(train_loader, model, criterion, optimizer, epoch,
         # compute output
         output = model(input)
 
+        if first:
+            write_tensor_to_file(input[0],'input.txt')
+            write_tensor_to_file(target[0],'target.txt')
+            write_tensor_to_file(output[0],'output.txt')
+            first = False
         # compute loss
         target = target.to(output.device)
         loss = criterion(output, target)
