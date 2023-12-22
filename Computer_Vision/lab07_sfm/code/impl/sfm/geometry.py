@@ -196,26 +196,6 @@ def TriangulateImage(K, image_name, images, registered_images, matches):
   # You can save the correspondences for each image in a dict and refer to the `local` new point indices here.
   # Afterwards you just add the index offset before adding the correspondences to the images.
   corrs = {}
-  
-  '''for img in registered_images:
-    desc_image1 = {}
-    desc_image2 = {}    
-    matches = GetPairMatches(img, image_name, matches)
-    curr_img = images[img]
-    points3D_triangulated, corr_img1, corr_img2 = TriangulatePoints(K, curr_img, image, matches)
-    
-    points3D = np.append(points3D, points3D_triangulated, 0)
-
-    cal_s = np.shape(points3D_triangulated)[0]
-    begin = np.shape(points3D)[0] - cal_s
-    end = np.shape(points3D)[0]
-    indices = np.arange(begin, end)
-    for i in range(cal_s):
-      desc_image1[corr_img1[i]] = indices[i]
-      desc_image2[corr_img2[i]] = indices[i]
-
-    corrs[img] = desc_image1
-    corrs[image_name] = desc_image2'''
     
   
   return points3D, corrs
