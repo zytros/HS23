@@ -51,10 +51,12 @@ def main():
 
   # Show the keypoints
   for image_name in image_names:
+    continue
     PlotWithKeypoints(images[image_name])
 
   # Show the feature matches
   for image_pair in itertools.combinations(image_names, 2):
+    continue
     PlotImagePairMatches(images[image_pair[0]], images[image_pair[1]], matches[(image_pair[0], image_pair[1])])
     gc.collect()
   # ------------------------------------------------------------------------------------
@@ -132,6 +134,7 @@ def main():
       print(f'Register image {image_name} from {len(image_kp_idxs)} correspondences')
 
       # Estimate new image pose
+      print(max(point3D_idxs))
       R, t = EstimateImagePose(images[image_name].kps[image_kp_idxs], points3D[point3D_idxs], K)
 
       # Set the estimated image pose in the image and add the correspondences between keypoints and 3D points
