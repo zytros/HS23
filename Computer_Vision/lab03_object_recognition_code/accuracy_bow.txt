@@ -1,0 +1,25 @@
+k=50
+iterations=100
+test pos sample accuracy: 0.7551020408163265
+test neg sample accuracy: 0.8200000000000001
+==============================================
+k=60
+iterations=100
+test pos sample accuracy: 0.7346938775510204
+test neg sample accuracy: 0.78
+==============================================
+k=20
+iterations=100
+test pos sample accuracy: 0.8163265306122449
+test neg sample accuracy: 0.64
+==============================================
+k=40
+iterations=100
+test pos sample accuracy: 0.8367346938775511
+test neg sample accuracy: 0.76
+==============================================
+k=30
+iterations=100
+test pos sample accuracy: 0.8775510204081632
+test neg sample accuracy: 0.6
+==============================================

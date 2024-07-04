@@ -1,0 +1,124 @@
+theory Protocol1
+begin
+
+
+/* ----------------- */
+/* Equational theory */
+/* ----------------- */
+
+/* Load the built-in symmetrical encryption theory */
+//Do not change the following line, i.e. do not add, change or remove anything (not even comments) in the following line.
+builtins: symmetric-encryption
+
+/* -------------- */
+/* Share Key Setup */
+/* -------------- */
+
+/* The following rule should be annotated by the following action facts: 
+- ShareKey($A, $B, ~kAB)
+*/
+rule ShareKey:  // share a key pair between two parties.
+/*FILL IN HERE*/
+
+[ Fr(~kAB) ]
+--[ ShareKey($A, $B, ~kAB) ]-> 
+[ !St_Key_ex($A, $B, ~kAB) ]
+
+/* -------------- */
+/* Protocol rules */
+/* -------------- */
+
+/* The following rule should be annotated by the following action facts: 
+- AliceSends($A, $B, kAB, ~ma)
+*/
+rule AliceSends:
+/*FILL IN HERE*/ 
+
+[   Fr(~ma), !St_Key_ex($A, $B, kAB) ]
+--[ 
+    AliceSends($A, $B, kAB, ~ma), 
+    RunningA($A, $B, ~ma)
+    ]-> 
+[   Out(senc(~ma, kAB)) 
+    , St_A($A, $B, kAB, ~ma)]
+
+/* The following rule should be annotated by the following action facts: 
+- BobReceivesAndSends($B, $A, kAB, ~mb, ma)
+*/
+rule BobReceivesAndSends:
+/*FILL IN HERE*/
+
+let ma = sdec(msg, kAB) in
+
+[ Fr(~mb), In(msg), !St_Key_ex($B, $A, kAB) ]
+--[ 
+    BobReceivesAndSends($B, $A, kAB, ~mb, ma), 
+    FinishedB($A, $B, ma, ~mb), 
+    SecretB(~mb),
+    RunningB($B, $A, ~mb),
+    CommitB($B, $A, ma)
+    ]-> 
+[ Out(senc(~mb, kAB)) ]
+
+/* The following rule should be annotated by the following action facts: 
+- AliceReceives($A, $B, kAB, ~ma, mb)
+*/
+rule AliceReceives:
+/*FILL IN HERE*/
+
+let mb = sdec(msg, kAB) in
+
+[ !St_Key_ex($A, $B, kAB), In(msg), St_A($A, $B, kAB, ~ma)]
+--[ AliceReceives($A, $B, kAB, ~ma, mb), 
+    FinishedA($A, $B, ~ma, mb),
+    SecretA(~ma),
+    CommitA($A, $B, mb)
+    ]-> 
+[]
+
+
+/* ---------- */
+/* Properties */
+/* ---------- */
+
+
+/* Executability check: */
+//Make sure to add the action facts referred to by this lemma in your model
+//Do not change this lemma, i.e. do not add, change or remove anything (not even comments) in the following three lines.
+lemma executable:
+exists-trace "Ex #i #j A B ma mb.
+FinishedA(A, B, ma, mb)@i & FinishedB(B,A,ma,mb)@j& not (A=B)"
+ 
+//un-comment following line for Task 1.3
+lemma secrecyA:
+/*FILL IN HERE: 
+You may only use the action facts SecretA, SecretB, and K to formulate this lemma.*/
+"All ma #i. SecretA(ma)@i ==> not (Ex #j. K(ma)@j)"
+
+//un-comment following line for Task 1.3
+lemma secrecyB:
+/*FILL IN HERE: 
+You may only use the action facts SecretA, SecretB, and K to formulate this lemma.*/
+"All mb #i. SecretB(mb)@i ==> not (Ex #j. K(mb)@j)"
+
+//un-comment following line for Task 1.4
+lemma non_injectiveA:
+/*FILL IN HERE: 
+You may only use the action facts CommitA, CommitB, RunningA, and RunningB to formulate this lemma.*/
+"All A B t #i.
+    CommitA(A,B,t) @i
+    ==> (Ex #j. RunningB(B,A,t) @j)"
+    
+//un-comment following line for Task 1.4
+lemma non_injectiveB:
+/*FILL IN HERE: 
+You may only use the action facts CommitA, CommitB, RunningA, and RunningB to formulate this lemma.*/
+"All A B t #i.
+    CommitB(B,A,t) @i
+    ==> (Ex #j. RunningA(A,B,t) @j)"
+
+
+end
+
+
+
